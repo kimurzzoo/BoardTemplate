@@ -2,6 +2,8 @@ HELP.md
 .gradle
 build/
 .vscode/
+application.yaml
+jwtkey.pem
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
