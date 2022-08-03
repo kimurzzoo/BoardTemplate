@@ -1,17 +1,13 @@
-package com.templete.board.account.security
+package com.templete.board.account
 
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.GenericFilterBean
 import java.io.IOException
-import java.security.MessageDigest
-import java.util.*
-import java.util.stream.Collectors
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
-import javax.xml.bind.DatatypeConverter
 
 class JwtAuthenticationFilter(private val jwtTokenProvider: JwtTokenProvider) : GenericFilterBean() {
     @Throws(IOException::class, ServletException::class)

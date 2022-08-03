@@ -1,11 +1,12 @@
-package com.templete.board.account.security
+package com.templete.board.account
 
-import com.templete.board.account.security.util.RSAKey
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import org.springframework.core.io.ResourceLoader
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.stereotype.Component
 import java.io.File
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -13,7 +14,9 @@ import java.util.*
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 
-class JwtTokenProvider(private val userDetailsService : UserDetailService)
+@Component
+class JwtTokenProvider(private val userDetailsService : UserDetailService,
+                        private val resourceLoader: ResourceLoader)
 {
     private lateinit var secretKey : PrivateKey
     private lateinit var publicKey : PublicKey
@@ -24,8 +27,12 @@ class JwtTokenProvider(private val userDetailsService : UserDetailService)
     @PostConstruct
     protected fun init()
     {
-        val keyfile = File("/src/main/resources/jwtkey.pem")
+        var resource = resourceLoader.getResource("classpath:jwtkey.pem")
+        var keyfile = resource.file
         secretKey = RSAKey.readPrivateKey(keyfile)!!
+
+        resource = resourceLoader.getResource("classpath:jwtpubkey.pub")
+        keyfile = resource.file
         publicKey = RSAKey.readPublicKey(keyfile)!!
     }
 
@@ -67,7 +74,7 @@ class JwtTokenProvider(private val userDetailsService : UserDetailService)
     }
 
     fun resolveToken(request: HttpServletRequest): String? {
-        return request.getHeader("Authorization").substring("Bearer ".length)
+        return request.getHeader("Authorization")?.substring("Bearer ".length)
     }
 
     fun validateToken(jwtToken: String): Boolean {

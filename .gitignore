@@ -4,6 +4,7 @@ build/
 .vscode/
 application.yaml
 jwtkey.pem
+jwtpubkey.pub
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/

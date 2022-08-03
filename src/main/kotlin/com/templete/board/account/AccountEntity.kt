@@ -2,37 +2,46 @@ package com.templete.board.account
 
 import com.templete.board.factor.comment.Comment
 import com.templete.board.factor.post.Post
-import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
+import org.springframework.data.mongodb.core.mapping.Field
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 
 @Document(collection = "user")
-class User(@Id var _id : String?,
-           var nickname : String,
-           val email : String,
-           var m_password : String,
-           var enabled : Boolean,
-           var roles : MutableList<String>,
-           ) : UserDetails {
+class User(nickname : String, email : String, m_password : String, enabled : Boolean, roles : MutableList<String>) : UserDetails {
+
+    @Id
+    var _id : String? = null
+
+    @Field(name = "nickname")
+    var nickname : String = nickname
+
+    @Field(name = "email")
+    val email : String = email
+
+    @Field(name = "m_password")
+    var m_password : String = m_password
+
+    @Field(name = "enabled")
+    var enabled : Boolean = enabled
+
+    @Field(name = "roles")
+    var roles : MutableList<String> = roles
 
     @DocumentReference(lazy = true)
-    private var refreshToken: String? = null
-        get() = field
-        set(value) {field = value}
+    var refreshToken: RefreshToken? = null
 
     @DocumentReference(lazy = true)
-    private var posts : MutableList<Post>? = null
-        get() = field
-        set(value) {field = value}
+    var posts : MutableList<Post> = mutableListOf()
 
     @DocumentReference(lazy = true)
-    private var comments : MutableList<Comment>? = null
-        get() = field
-        set(value) {field = value}
+    var comments : MutableList<Comment> = mutableListOf()
 
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
@@ -70,9 +79,9 @@ class User(@Id var _id : String?,
 }
 
 @Document(collection = "refreshtoken")
-class RefreshToken(
+open class RefreshToken(
     @Id var _id : String?,
-    var userid : String,
+    @DocumentReference(lazy = true) var user : User?,
     var refreshToken: String
 )
 {
